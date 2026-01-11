@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Shop | Home</title>
+  <style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+body{background:#f4f6f9}
+
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-50px)}to{opacity:1;transform:translateX(0)}}
+@keyframes glow{0%,100%{box-shadow:0 0 10px rgba(16,185,129,.3)}50%{box-shadow:0 0 20px rgba(16,185,129,.6)}}
+@keyframes shimmer{0%{background-position:200% center}100%{background-position:-200% center}}
+@keyframes pageEnter{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+@keyframes pageExit{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(0.95)}}
+
+body.page-exit{animation:pageExit .4s ease-in forwards}
+body.page-enter{animation:pageEnter .4s ease-out}
+
+.navbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:15px 40px;
+  background:linear-gradient(135deg,#10b981,#059669);
+  color:white;
+  position:sticky;
+  top:0;
+  z-index:1000;
+  animation:fadeInDown .6s ease-out;
+  box-shadow:0 4px 15px rgba(16,185,129,.2);
+}
+.logo{
+  font-size:28px;
+  font-weight:bold;
+  cursor:pointer;
+  animation:glow 2s ease-in-out infinite;
+}
+.search-bar{
+  width:40%;
+  padding:10px 20px;
+  border-radius:30px;
+  border:none;
+  animation:fadeInDown .6s ease-out .2s both;
+  background:#f0fdf4;
+  transition:.3s;
+}
+.search-bar:focus{
+  outline:none;
+  box-shadow:0 0 15px rgba(16,185,129,.4);
+  transform:scale(1.02);
+}
+.nav-links{
+  display:flex;
+  gap:20px;
+  align-items:center;
+}
+.nav-links a{
+  margin-left:20px;
+  color:white;
+  text-decoration:none;
+  font-weight:600;
+  animation:fadeInDown .6s ease-out .4s both;
+  transition:.2s;
+  position:relative;
+  cursor:pointer;
+}
+.nav-links a:hover{
+  transform:scale(1.1);
+}
+.nav-links a::after{
+  content:'';
+  position:absolute;
+  bottom:-5px;
+  left:0;
+  width:0;
+  height:2px;
+  background:white;
+  transition:.3s;
+}
+.nav-links a:hover::after{
+  width:100%;
+}
+
+.hero{
+  height:420px;
+  background:linear-gradient(135deg,#10b981 0%,#059669 50%,#047857 100%);
+  display:flex;
+  align-items:center;
+  padding:60px;
+  color:white;
+  animation:fadeInUp .8s ease-out;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:radial-gradient(circle at 20% 50%,rgba(255,255,255,.1) 0%,transparent 50%);
+  pointer-events:none;
+}
+.hero h1{
+  font-size:50px;
+  animation:slideInLeft .8s ease-out;
+  position:relative;
+  z-index:1;
+  text-shadow:0 4px 15px rgba(0,0,0,.2);
+}
+.hero p{
+  margin-top:10px;
+  font-size:18px;
+  animation:slideInLeft .8s ease-out .2s both;
+  position:relative;
+  z-index:1;
+}
+.hero-btn{
+  display:inline-block;
+  margin-top:20px;
+  padding:15px 40px;
+  background:white;
+  color:#10b981;
+  border-radius:30px;
+  text-decoration:none;
+  font-weight:bold;
+  animation:slideInLeft .8s ease-out .4s both;
+  transition:.3s;
+  position:relative;
+  z-index:1;
+  overflow:hidden;
+  cursor:pointer;
+  border:none;
+  font-size:16px;
+}
+.hero-btn::after{
+  content:'';
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:0;
+  height:0;
+  background:rgba(16,185,129,0.2);
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  transition:.6s;
+}
+.hero-btn:active::after{
+  width:300px;
+  height:300px;
+}
+.hero-btn:hover{
+  transform:scale(1.08);
+  box-shadow:0 8px 20px rgba(0,0,0,.2);
+}
+
+.categories{
+  display:flex;
+  justify-content:center;
+  gap:30px;
+  padding:40px;
+  animation:fadeInUp .8s ease-out .2s both;
+  flex-wrap:wrap;
+}
+.category-card{
+  width:200px;
+  height:200px;
+  background:linear-gradient(135deg,#ffffff,#f0fdf4);
+  border-radius:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  font-size:20px;
+  font-weight:bold;
+  color:#10b981;
+  box-shadow:0 5px 15px rgba(16,185,129,.1);
+  cursor:pointer;
+  transition:.3s;
+  animation:fadeInUp .6s ease-out backwards;
+  position:relative;
+  overflow:hidden;
+  border:2px solid transparent;
+}
+.category-card::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:-100%;
+  width:100%;
+  height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);
+  animation:shimmer 2s infinite;
+}
+.category-card:nth-child(1){animation-delay:.3s}
+.category-card:nth-child(2){animation-delay:.4s}
+.category-card:nth-child(3){animation-delay:.5s}
+.category-card:nth-child(4){animation-delay:.6s}
+.category-card:hover{
+  transform:scale(1.08) rotate(-2deg);
+  box-shadow:0 15px 35px rgba(16,185,129,.25);
+  background:linear-gradient(135deg,#10b981,#059669);
+  color:white;
+  border-color:#059669;
+}
+
+.section-title{
+  text-align:center;
+  margin:30px 0;
+  font-size:28px;
+  animation:fadeInUp .6s ease-out;
+  color:#059669;
+  font-weight:bold;
+}
+.products{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:25px;
+  padding:40px;
+}
+.product-card{
+  background:white;
+  border-radius:15px;
+  box-shadow:0 5px 15px rgba(16,185,129,.1);
+  overflow:hidden;
+  animation:fadeInUp .6s ease-out backwards;
+  border:2px solid transparent;
+  cursor:pointer;
+  position:relative;
+  transition:all .3s cubic-bezier(.4,0,.2,1);
+}
+.product-card:nth-child(1){animation-delay:.1s}
+.product-card:nth-child(2){animation-delay:.2s}
+.product-card:nth-child(3){animation-delay:.3s}
+.product-card:nth-child(4){animation-delay:.4s}
+.product-card:nth-child(5){animation-delay:.5s}
+.product-card:nth-child(6){animation-delay:.6s}
+.product-card:hover{
+  transform:translateY(-15px) scale(1.05);
+  box-shadow:0 20px 40px rgba(16,185,129,.2);
+  border-color:#10b981;
+}
+.product-card img{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  transition:.4s cubic-bezier(.4,0,.2,1);
+}
+.product-card:hover img{
+  transform:scale(1.12);
+}
+.product-card h3{
+  padding:10px;
+  color:#059669;
+}
+.product-card p{
+  padding:0 10px;
+  color:#10b981;
+  font-weight:bold;
+}
+.product-card button{
+  width:100%;
+  border:none;
+  padding:12px;
+  background:linear-gradient(135deg,#10b981,#059669);
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  transition:.3s;
+  position:relative;
+  overflow:hidden;
+}
+.product-card button::before{
+  content:'';
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:0;
+  height:0;
+  background:rgba(255,255,255,.2);
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  transition:.5s;
+}
+.product-card button:hover::before{
+  width:300px;
+  height:300px;
+}
+.product-card button:hover{
+  transform:translateY(-2px);
+}
+
+footer{
+  background:linear-gradient(135deg,#10b981,#059669);
+  color:white;
+  text-align:center;
+  padding:20px;
+  margin-top:40px;
+  animation:fadeInUp .6s ease-out;
+  box-shadow:0 -4px 15px rgba(16,185,129,.2);
+}
+
+.search-results{
+  position:absolute;
+  top:100%;
+  left:0;
+  right:0;
+  background:white;
+  border-radius:10px;
+  max-height:400px;
+  overflow-y:auto;
+  box-shadow:0 10px 25px rgba(16,185,129,.2);
+  display:none;
+  z-index:999;
+  margin-top:5px;
+  animation:fadeInUp .3s ease-out;
+}
+.search-results.show{
+  display:block;
+}
+.search-item{
+  padding:12px 15px;
+  border-bottom:1px solid #f0fdf4;
+  cursor:pointer;
+  transition:.2s;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.search-item:hover{
+  background:#f0fdf4;
+  padding-left:20px;
+}
+.search-item img{
+  width:40px;
+  height:40px;
+  object-fit:cover;
+  border-radius:5px;
+}
+.search-item-details h4{
+  color:#059669;
+  margin:0;
+  font-size:14px;
+}
+.search-item-details p{
+  color:#10b981;
+  margin:2px 0 0 0;
+  font-weight:bold;
+  font-size:13px;
+}
+  </style>
+  <script src="config.js"></script>
+</head>
+
+<body class="page-enter">
+
+<div class="navbar">
+  <div class="logo">🛍️ E-Shop</div>
+  <div style="position:relative;width:40%">
+    <input type="text" class="search-bar" id="searchInput" placeholder="Search products...">
+    <div id="searchResults" class="search-results"></div>
+  </div>
+  <div class="nav-links">
+    <a onclick="navigateTo('products.html')">Products</a>
+    <a onclick="navigateTo('cart.html')">Cart</a>
+    <a id="loginLink" onclick="navigateTo('login.html')">Login</a>
+    <a id="dashboardLink" onclick="navigateTo('dashboard.html')" style="display:none">Dashboard</a>
+    <a id="logoutLink" onclick="logout()" style="display:none">Logout</a>
+  </div>
+</div>
+
+<div class="hero" id="hero">
+  <div>
+    <h1>Shop Smarter</h1>
+    <p>Find the best deals on electronics, fashion and more</p>
+    <a class="hero-btn" onclick="navigateTo('products.html')">Shop Now</a>
+  </div>
+</div>
+
+<div class="categories">
+  <div class="category-card" onclick="goToCategory('men')">👨 Men</div>
+  <div class="category-card" onclick="goToCategory('women')">👩 Women</div>
+  <div class="category-card" onclick="goToCategory('electronics')">💻 Electronics</div>
+  <div class="category-card" onclick="goToCategory('kids')">👶 Kids</div>
+</div>
+
+<h2 class="section-title">Featured Products</h2>
+<div class="products" id="product-list"></div>
+
+<footer>© 2026 E-Shop | Powered by Rahul</footer>
+
+<script>
+let isNavigating = false;
+
+function navigateTo(url) {
+  if (isNavigating) return;
+  isNavigating = true;
+  document.body.classList.add('page-exit');
+  setTimeout(() => {
+    window.location.href = url;
+  }, 400);
+}
+
+function goToCategory(category) {
+  sessionStorage.setItem("selectedCategory", category);
+  navigateTo('products.html');
+}
+
+const token = localStorage.getItem("token");
+const user = JSON.parse(localStorage.getItem("user"));
+
+if (token && user) {
+  document.getElementById("loginLink").style.display = "none";
+  document.getElementById("dashboardLink").style.display = "inline";
+  document.getElementById("logoutLink").style.display = "inline";
+}
+
+function logout() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  localStorage.removeItem("cart");
+  navigateTo('login.html');
+}
+
+let allProducts = [];
+
+async function loadProducts() {
+  try {
+    const res = await fetch("http://localhost:3000/api/products");
+    allProducts = await res.json();
+    const container = document.getElementById("product-list");
+    container.innerHTML = "";
+
+    allProducts.slice(0, 6).forEach((p, index) => {
+      const div = document.createElement("div");
+      div.className = "product-card";
+      div.innerHTML = `
+        <img src="${p.image_url || 'https://via.placeholder.com/220x180'}" alt="${p.name}">
+        <h3>${p.name}</h3>
+        <p>₹${p.price}</p>
+        <button onclick="addToCart('${p._id}', event)">Add to Cart</button>
+      `;
+      container.appendChild(div);
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function addToCart(id, event) {
+  event.stopPropagation();
+  if (!token) return alert("Please login first");
+
+  const product = allProducts.find(p => p._id === id);
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const exist = cart.find(p => p._id === id);
+
+  if (exist) exist.quantity++;
+  else cart.push({ ...product, quantity: 1 });
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+  alert("Added to cart ✓");
+}
+
+const searchInput = document.getElementById("searchInput");
+const searchResults = document.getElementById("searchResults");
+
+searchInput.addEventListener("input", (e) => {
+  const query = e.target.value.toLowerCase().trim();
+
+  if (query.length === 0) {
+    searchResults.classList.remove("show");
+    return;
+  }
+
+  const filtered = allProducts.filter(p =>
+    p.name.toLowerCase().includes(query) ||
+    p.description?.toLowerCase().includes(query)
+  );
+
+  searchResults.innerHTML = "";
+
+  if (filtered.length === 0) {
+    searchResults.innerHTML = '<div style="padding:20px;text-align:center;color:#888;">No products found</div>';
+    searchResults.classList.add("show");
+    return;
+  }
+
+  filtered.slice(0, 8).forEach(p => {
+    const div = document.createElement("div");
+    div.className = "search-item";
+    div.innerHTML = `
+      <img src="${p.image_url || 'https://via.placeholder.com/40'}" alt="${p.name}">
+      <div class="search-item-details">
+        <h4>${p.name}</h4>
+        <p>₹${p.price}</p>
+      </div>
+    `;
+    div.addEventListener("click", () => {
+      addToCart(p._id, { stopPropagation: () => {} });
+      searchInput.value = "";
+      searchResults.classList.remove("show");
+    });
+    searchResults.appendChild(div);
+  });
+
+  searchResults.classList.add("show");
+});
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".navbar")) {
+    searchResults.classList.remove("show");
+  }
+});
+
+loadProducts();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout - E-Shop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+
+body{background:#f4f6f9}
+
+@keyframes pageEnter{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+@keyframes pageExit{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(0.95)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+body.page-exit{animation:pageExit .4s ease-in forwards}
+body.page-enter{animation:pageEnter .4s ease-out}
+
+.navbar{
+  background:linear-gradient(135deg,#1e40af 0%,#1e3a8a 100%);
+  color:white;
+  padding:15px 40px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 8px 32px rgba(30,64,175,.3);
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.navbar h2{cursor:pointer}
+
+.container{
+  max-width:900px;
+  margin:40px auto;
+  padding:20px;
+  animation:fadeInUp .6s ease-out;
+}
+
+.form-card{
+  background:white;
+  padding:40px;
+  border-radius:15px;
+  box-shadow:0 10px 30px rgba(59,130,246,.15);
+  border:2px solid rgba(59,130,246,.1);
+  animation:fadeInUp .6s ease-out;
+}
+
+.form-card h2{
+  color:#1e40af;
+  margin-bottom:30px;
+  font-size:28px;
+  border-bottom:3px solid #3b82f6;
+  padding-bottom:15px;
+}
+
+.form-group{
+  margin-bottom:20px;
+  animation:fadeInUp .6s ease-out backwards;
+}
+
+.form-group:nth-child(n+3){animation-delay:.1s}
+.form-group:nth-child(n+4){animation-delay:.2s}
+.form-group:nth-child(n+5){animation-delay:.3s}
+.form-group:nth-child(n+6){animation-delay:.4s}
+.form-group:nth-child(n+7){animation-delay:.5s}
+
+label{
+  display:block;
+  margin-bottom:8px;
+  color:#333;
+  font-weight:600;
+  font-size:14px;
+}
+
+input, textarea{
+  width:100%;
+  padding:12px 16px;
+  border:2px solid rgba(59,130,246,.2);
+  border-radius:10px;
+  font-size:15px;
+  transition:.3s;
+  font-family:inherit;
+}
+
+input:focus, textarea:focus{
+  outline:none;
+  border-color:#3b82f6;
+  background:#f9fbff;
+  box-shadow:0 0 0 3px rgba(59,130,246,.1);
+  transform:scale(1.01);
+}
+
+textarea{
+  resize:vertical;
+  min-height:80px;
+}
+
+.form-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.place-btn{
+  width:100%;
+  padding:15px;
+  background:linear-gradient(135deg,#10b981,#059669);
+  color:white;
+  border:none;
+  border-radius:10px;
+  font-size:18px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:.3s;
+  position:relative;
+  overflow:hidden;
+  margin-top:30px;
+  will-change:transform;
+}
+
+.place-btn::before{
+  content:'';
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:0;
+  height:0;
+  background:rgba(255,255,255,.2);
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  transition:.6s;
+}
+
+.place-btn:active::before{
+  width:300px;
+  height:300px;
+}
+
+.place-btn:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 30px rgba(16,185,129,.3);
+}
+
+.order-summary{
+  background:#f0fdf4;
+  border-left:4px solid #10b981;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:30px;
+  animation:fadeInUp .6s ease-out;
+}
+
+.order-summary p{
+  color:#666;
+  margin:8px 0;
+  font-size:14px;
+}
+
+.order-summary p b{
+  color:#10b981;
+  font-weight:bold;
+}
+
+.error{
+  color:#e74c3c;
+  font-size:13px;
+  margin-top:5px;
+  animation:shake .3s ease-out;
+}
+
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-5px)}
+  75%{transform:translateX(5px)}
+}
+
+@media(max-width:768px){
+  .form-row{
+    grid-template-columns:1fr;
+  }
+}
+  </style>
+  <script src="config.js"></script>
+</head>
+<body class="page-enter">
+
+<div class="navbar">
+  <h2 onclick="window.location.href='index.html'">🛍️ E-Shop</h2>
+</div>
+
+<div class="container">
+  <div class="form-card">
+    <h2>📦 Checkout</h2>
+    
+    <div class="order-summary">
+      <p>Total Items: <b id="totalItems">0</b></p>
+      <p>Order Total: <b>₹<span id="orderTotal">0</span></b></p>
+    </div>
+    
+    <form id="checkoutForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fullName">Full Name</label>
+          <input type="text" id="fullName" required>
+          <div id="fullNameError" class="error"></div>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" required>
+          <div id="emailError" class="error"></div>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" required>
+          <div id="phoneError" class="error"></div>
+        </div>
+        <div class="form-group">
+          <label for="city">City</label>
+          <input type="text" id="city" required>
+          <div id="cityError" class="error"></div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="address">Address</label>
+        <textarea id="address" required></textarea>
+        <div id="addressError" class="error"></div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="state">State</label>
+          <input type="text" id="state" required>
+          <div id="stateError" class="error"></div>
+        </div>
+        <div class="form-group">
+          <label for="zip">ZIP Code</label>
+          <input type="text" id="zip" required>
+          <div id="zipError" class="error"></div>
+        </div>
+      </div>
+      
+      <button type="submit" class="place-btn">Place Order</button>
+    </form>
+  </div>
+</div>
+
+<script>
+let isNavigating = false;
+
+function navigateTo(url) {
+  if (isNavigating) return;
+  isNavigating = true;
+  document.body.classList.add('page-exit');
+  setTimeout(() => {
+    window.location.href = url;
+  }, 400);
+}
+
+const token = localStorage.getItem("token");
+if(!token) {
+  alert("Please login first");
+  navigateTo('login.html');
+}
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+if(cart.length === 0) {
+  alert("Your cart is empty");
+  navigateTo('cart.html');
+}
+
+const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+const shipping = subtotal > 500 ? 0 : 50;
+const tax = Math.round(subtotal * 0.1);
+const total = subtotal + shipping + tax;
+
+document.getElementById("totalItems").textContent = totalItems;
+document.getElementById("orderTotal").textContent = total;
+
+document.getElementById("checkoutForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  
+  const fullName = document.getElementById("fullName").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const address = document.getElementById("address").value.trim();
+  const city = document.getElementById("city").value.trim();
+  const state = document.getElementById("state").value.trim();
+  const zip = document.getElementById("zip").value.trim();
+  
+  document.querySelectorAll('.error').forEach(el => el.textContent = '');
+  
+  if(!fullName) {
+    document.getElementById("fullNameError").textContent = "Full name is required";
+    return;
+  }
+  
+  if(!phone || phone.length < 10) {
+    document.getElementById("phoneError").textContent = "Valid phone number required";
+    return;
+  }
+  
+  try {
+    const res = await fetch("http://localhost:3000/api/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({
+        items: cart,
+        total: total,
+        shippingAddress: {fullName, email, phone, address, city, state, zip}
+      })
+    });
+    
+    const data = await res.json();
+    
+    if(!res.ok) {
+      alert("Order failed: " + data.message);
+      return;
+    }
+    
+    localStorage.removeItem("cart");
+    alert("✓ Order placed successfully!");
+    navigateTo('dashboard.html');
+    
+  } catch(err) {
+    alert("Error placing order");
+  }
+});
+</script>
+
+</body>
+</html>

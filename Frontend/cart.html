@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="config.js"></script>
+  <meta charset="UTF-8">
+  <title>E-Shop | Cart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+
+body{background:#f4f6f9}
+
+@keyframes pageEnter{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+@keyframes pageExit{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(0.95)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-50px)}to{opacity:1;transform:translateX(0)}}
+
+body.page-exit{animation:pageExit .4s ease-in forwards}
+body.page-enter{animation:pageEnter .4s ease-out}
+
+.navbar{
+  background:linear-gradient(135deg,#1e40af 0%,#1e3a8a 100%);
+  color:white;
+  padding:15px 40px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 8px 32px rgba(30,64,175,.3);
+  position:sticky;
+  top:0;
+  z-index:100;
+  animation:slideInLeft .5s ease-out;
+}
+
+.navbar h2{
+  cursor:pointer;
+  transition:.2s;
+}
+
+.navbar h2:hover{
+  transform:scale(1.05);
+}
+
+.navbar a{
+  color:white;
+  margin-left:20px;
+  text-decoration:none;
+  font-weight:600;
+  transition:.2s;
+  cursor:pointer;
+}
+
+.navbar a:hover{
+  text-shadow:0 0 10px rgba(255,255,255,.5);
+}
+
+.container{
+  max-width:1200px;
+  margin:40px auto;
+  padding:20px;
+  display:flex;
+  gap:30px;
+  animation:fadeInUp .6s ease-out;
+}
+
+.cart-items{
+  flex:2;
+  animation:slideInLeft .6s ease-out;
+}
+
+.cart-summary{
+  flex:1;
+  background:white;
+  padding:30px;
+  border-radius:15px;
+  border:2px solid rgba(59,130,246,.1);
+  height:fit-content;
+  box-shadow:0 10px 30px rgba(59,130,246,.15);
+  position:sticky;
+  top:120px;
+  animation:fadeInUp .6s ease-out .1s both;
+}
+
+.cart-summary h3{
+  color:#1e40af;
+  margin-bottom:20px;
+  border-bottom:3px solid #3b82f6;
+  padding-bottom:15px;
+  font-size:20px;
+}
+
+.cart-summary p{
+  display:flex;
+  justify-content:space-between;
+  margin:12px 0;
+  color:#666;
+  font-size:16px;
+}
+
+.cart-summary p b{
+  color:#1e40af;
+  font-weight:bold;
+}
+
+.total{
+  font-size:20px !important;
+  color:#10b981 !important;
+  border-top:2px solid #e0e0e0;
+  padding-top:15px;
+  margin-top:20px;
+}
+
+.checkout-btn{
+  width:100%;
+  padding:15px;
+  background:linear-gradient(135deg,#10b981,#059669);
+  border:none;
+  color:white;
+  font-size:16px;
+  margin-top:25px;
+  cursor:pointer;
+  border-radius:10px;
+  font-weight:bold;
+  transition:.3s;
+  position:relative;
+  overflow:hidden;
+  will-change:transform;
+}
+
+.checkout-btn::before{
+  content:'';
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:0;
+  height:0;
+  background:rgba(255,255,255,.2);
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  transition:.6s;
+}
+
+.checkout-btn:active::before{
+  width:300px;
+  height:300px;
+}
+
+.checkout-btn:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 30px rgba(16,185,129,.3);
+}
+
+.cart-card{
+  background:white;
+  padding:20px;
+  margin-bottom:20px;
+  border-radius:15px;
+  display:flex;
+  gap:20px;
+  border:2px solid rgba(59,130,246,.1);
+  box-shadow:0 4px 15px rgba(59,130,246,.08);
+  animation:fadeInUp .4s ease-out backwards;
+  transition:.3s;
+  will-change:transform;
+}
+
+.cart-card:hover{
+  box-shadow:0 10px 30px rgba(59,130,246,.15);
+  border-color:rgba(59,130,246,.2);
+  transform:translateY(-3px);
+}
+
+.cart-card img{
+  width:120px;
+  height:100px;
+  object-fit:cover;
+  border-radius:10px;
+  border:2px solid rgba(59,130,246,.1);
+}
+
+.cart-details{
+  flex:1;
+}
+
+.cart-details h4{
+  color:#1e40af;
+  margin-bottom:8px;
+  font-size:16px;
+}
+
+.cart-details p{
+  color:#666;
+  margin:5px 0;
+  font-size:14px;
+}
+
+.qty-control{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:12px;
+}
+
+.qty-btn{
+  padding:6px 12px;
+  background:#e0e0e0;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:bold;
+  transition:.2s;
+  will-change:transform;
+}
+
+.qty-btn:hover{
+  background:#3b82f6;
+  color:white;
+  transform:scale(1.1);
+}
+
+.qty-display{
+  padding:6px 12px;
+  background:#f5f5f5;
+  border-radius:6px;
+  font-weight:bold;
+  min-width:40px;
+  text-align:center;
+}
+
+.remove-btn{
+  background:linear-gradient(135deg,#ef4444,#dc2626);
+  color:white;
+  border:none;
+  padding:8px 14px;
+  border-radius:6px;
+  cursor:pointer;
+  margin-top:10px;
+  transition:.2s;
+  font-weight:bold;
+  will-change:transform;
+}
+
+.remove-btn:hover{
+  transform:scale(1.05);
+  box-shadow:0 6px 16px rgba(239,68,68,.3);
+}
+
+.empty-cart{
+  text-align:center;
+  padding:60px 20px;
+  color:#888;
+  font-size:18px;
+}
+
+@media(max-width:768px){
+  .container{
+    flex-direction:column;
+  }
+  .cart-summary{
+    position:relative;
+    top:0;
+  }
+  .cart-card{
+    flex-direction:column;
+  }
+  .cart-card img{
+    width:100%;
+    height:200px;
+  }
+}
+  </style>
+</head>
+<body class="page-enter">
+
+<div class="navbar">
+  <h2 onclick="navigateTo('index.html')">🛍️ E-Shop</h2>
+  <div style="display:flex;gap:20px">
+    <a onclick="navigateTo('index.html')">Home</a>
+    <a onclick="navigateTo('products.html')">Products</a>
+    <a onclick="navigateTo('dashboard.html')" id="dashboardLink">Dashboard</a>
+  </div>
+</div>
+
+<div class="container">
+  <div class="cart-items" id="cartItemsContainer">
+    <!-- Cart items will be here -->
+  </div>
+  
+  <div class="cart-summary">
+    <h3>💳 Order Summary</h3>
+    <p>Subtotal: <b>₹<span id="subtotal">0</span></b></p>
+    <p>Shipping: <b>₹<span id="shipping">0</span></b></p>
+    <p>Tax: <b>₹<span id="tax">0</span></b></p>
+    <p class="total">Total: <b>₹<span id="total">0</span></b></p>
+    <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+  </div>
+</div>
+
+<script>
+let isNavigating = false;
+
+function navigateTo(url) {
+  if (isNavigating) return;
+  isNavigating = true;
+  document.body.classList.add('page-exit');
+  setTimeout(() => {
+    window.location.href = url;
+  }, 400);
+}
+
+const token = localStorage.getItem("token");
+if(!token) {
+  alert("Please login first");
+  navigateTo('login.html');
+}
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+function displayCart() {
+  const container = document.getElementById("cartItemsContainer");
+  container.innerHTML = "";
+  
+  if(cart.length === 0) {
+    container.innerHTML = '<div class="empty-cart">🛒 Your cart is empty</div>';
+    updateSummary();
+    return;
+  }
+  
+  cart.forEach((item, index) => {
+    const div = document.createElement("div");
+    div.className = "cart-card";
+    div.style.animationDelay = (index * 0.1) + "s";
+    
+    div.innerHTML = `
+      <img src="${item.image_url || 'https://via.placeholder.com/120x100'}" alt="${item.name}">
+      <div class="cart-details">
+        <h4>${item.name}</h4>
+        <p>₹${item.price} × <span id="qty-${index}">${item.quantity}</span></p>
+        <p style="color:#3b82f6;font-weight:bold">Subtotal: ₹${item.price * item.quantity}</p>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
+          <span class="qty-display" id="qty-display-${index}">${item.quantity}</span>
+          <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
+          <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+  
+  updateSummary();
+}
+
+function updateQty(index, change) {
+  if(cart[index]) {
+    cart[index].quantity += change;
+    if(cart[index].quantity < 1) {
+      removeItem(index);
+    } else {
+      localStorage.setItem("cart", JSON.stringify(cart));
+      displayCart();
+    }
+  }
+}
+
+function removeItem(index) {
+  cart.splice(index, 1);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  displayCart();
+}
+
+function updateSummary() {
+  const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const shipping = subtotal > 500 ? 0 : 50;
+  const tax = Math.round(subtotal * 0.1);
+  const total = subtotal + shipping + tax;
+  
+  document.getElementById("subtotal").textContent = subtotal;
+  document.getElementById("shipping").textContent = shipping;
+  document.getElementById("tax").textContent = tax;
+  document.getElementById("total").textContent = total;
+}
+
+function checkout() {
+  if(cart.length === 0) {
+    alert("Your cart is empty!");
+    return;
+  }
+  navigateTo('checkout.html');
+}
+
+displayCart();
+</script>
+
+</body>
+</html>

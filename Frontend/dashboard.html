@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - E-Shop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+
+body{background:linear-gradient(135deg,#f8f9fa 0%,#e9ecef 100%)}
+
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pageEnter{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+@keyframes pageExit{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(0.95)}}
+
+body.page-exit{animation:pageExit .4s ease-in forwards}
+body.page-enter{animation:pageEnter .4s ease-out}
+
+.navbar{
+  background:linear-gradient(135deg,#1e40af 0%,#1e3a8a 100%);
+  color:white;
+  padding:15px 40px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 8px 32px rgba(30,64,175,.3);
+  position:sticky;
+  top:0;
+  z-index:100;
+  animation:fadeInDown .6s ease-out;
+}
+
+.navbar h2{
+  cursor:pointer;
+  transition:.2s;
+}
+
+.navbar h2:hover{
+  transform:scale(1.05);
+}
+
+.nav-links{
+  display:flex;
+  gap:20px;
+  align-items:center;
+}
+
+.nav-links a{
+  color:white;
+  text-decoration:none;
+  font-weight:600;
+  transition:.2s;
+  cursor:pointer;
+}
+
+.nav-links a:hover{
+  transform:scale(1.1);
+  text-shadow:0 0 10px rgba(255,255,255,.5);
+}
+
+.dashboard{
+  display:flex;
+  padding:40px;
+  gap:30px;
+  max-width:1400px;
+  margin:0 auto;
+}
+
+.profile-card{
+  flex:1;
+  background:linear-gradient(135deg,#ffffff 0%,#f3f4f6 100%);
+  padding:30px;
+  border-radius:15px;
+  border:2px solid rgba(59,130,246,.1);
+  box-shadow:0 10px 35px rgba(59,130,246,.1);
+  animation:fadeInUp .6s ease-out;
+  will-change:transform;
+}
+
+.profile-card h2{
+  color:#1e40af;
+  margin-bottom:25px;
+  font-size:24px;
+  border-bottom:3px solid #3b82f6;
+  padding-bottom:15px;
+}
+
+.profile-card p{
+  margin:15px 0;
+  font-size:16px;
+  color:#4b5563;
+  line-height:1.8;
+}
+
+.profile-card p b{
+  color:#1e40af;
+  font-weight:600;
+}
+
+.orders{
+  flex:2;
+  background:linear-gradient(135deg,#ffffff 0%,#f3f4f6 100%);
+  padding:30px;
+  border-radius:15px;
+  border:2px solid rgba(59,130,246,.1);
+  box-shadow:0 10px 35px rgba(59,130,246,.1);
+  animation:fadeInUp .6s ease-out .1s both;
+}
+
+.orders h2{
+  color:#1e40af;
+  margin-bottom:25px;
+  font-size:24px;
+  border-bottom:3px solid #3b82f6;
+  padding-bottom:15px;
+}
+
+.order{
+  border-left:4px solid #3b82f6;
+  border-radius:8px;
+  padding:20px;
+  margin-bottom:20px;
+  background:white;
+  box-shadow:0 4px 12px rgba(59,130,246,.08);
+  transition:.3s;
+  animation:fadeInUp .4s ease-out backwards;
+  will-change:transform;
+}
+
+.order:hover{
+  transform:translateX(5px);
+  box-shadow:0 8px 24px rgba(59,130,246,.15);
+}
+
+.order h4{
+  color:#1e40af;
+  margin-bottom:10px;
+  font-size:16px;
+}
+
+.order p{
+  margin:5px 0;
+  color:#6b7280;
+  font-size:14px;
+}
+
+.order ul{
+  margin-left:20px;
+  margin-top:10px;
+}
+
+.order li{
+  color:#6b7280;
+  margin:5px 0;
+  font-size:14px;
+}
+
+.logout-btn{
+  background:linear-gradient(135deg,#ef4444,#dc2626);
+  color:white;
+  border:none;
+  padding:12px 24px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+  margin-top:20px;
+  transition:.3s;
+  width:100%;
+  will-change:transform;
+}
+
+.logout-btn:hover{
+  transform:translateY(-3px);
+  box-shadow:0 8px 20px rgba(239,68,68,.3);
+}
+
+.empty-state{
+  text-align:center;
+  padding:40px 20px;
+  color:#888;
+}
+
+@media(max-width:768px){
+  .dashboard{
+    flex-direction:column;
+  }
+}
+  </style>
+  <script src="config.js"></script>
+</head>
+<body class="page-enter">
+
+<div class="navbar">
+  <h2 onclick="navigateTo('index.html')">🛍️ E-Shop</h2>
+  <div class="nav-links">
+    <a onclick="navigateTo('index.html')">Home</a>
+    <a onclick="navigateTo('products.html')">Products</a>
+    <a onclick="logout()">Logout</a>
+  </div>
+</div>
+
+<div class="dashboard">
+  <div class="profile-card" id="profile"></div>
+  <div class="orders">
+    <h2>📦 Your Orders</h2>
+    <div id="orders"></div>
+  </div>
+</div>
+
+<script>
+let isNavigating = false;
+
+function navigateTo(url) {
+  if (isNavigating) return;
+  isNavigating = true;
+  document.body.classList.add('page-exit');
+  setTimeout(() => {
+    window.location.href = url;
+  }, 400);
+}
+
+const token = localStorage.getItem("token");
+const user = JSON.parse(localStorage.getItem("user"));
+
+if(!token || !user) {
+  alert("Please login first");
+  navigateTo('login.html');
+}
+
+function logout() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  localStorage.removeItem("cart");
+  navigateTo('login.html');
+}
+
+const profileCard = document.getElementById("profile");
+profileCard.innerHTML = `
+  <h2>👤 Profile</h2>
+  <p><b>Name:</b> ${user.name}</p>
+  <p><b>Email:</b> ${user.email}</p>
+  <p><b>Member Since:</b> ${new Date().toLocaleDateString()}</p>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+`;
+
+const API_URL = window.APP_CONFIG.API_URL;
+
+fetch(API_URL + "/api/orders/my", {
+  headers: { Authorization: "Bearer " + token }
+})
+.then(res => res.json())
+.then(orders => {
+  const box = document.getElementById("orders");
+  
+  if(!orders || orders.length === 0) {
+    box.innerHTML = '<div class="empty-state">📭 No orders yet</div>';
+    return;
+  }
+  
+  box.innerHTML = "";
+  orders.forEach((o, index) => {
+    const div = document.createElement("div");
+    div.className = "order";
+    div.style.animationDelay = (index * 0.1) + "s";
+    
+    div.innerHTML = `
+      <h4>📦 Order #${(o._id || o.id).substring(0, 8)}</h4>
+      <p><b>Total:</b> ₹${o.total}</p>
+      <p><b>Date:</b> ${new Date(o.createdAt).toLocaleString()}</p>
+      <ul>
+        ${o.items.map(i => `<li>${i.name} × ${i.quantity}</li>`).join("")}
+      </ul>
+    `;
+    box.appendChild(div);
+  });
+})
+.catch(err => {
+  console.error(err);
+  document.getElementById("orders").innerHTML = '<div class="empty-state">Failed to load orders</div>';
+});
+</script>
+
+</body>
+</html>
