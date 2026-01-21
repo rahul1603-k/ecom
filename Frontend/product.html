@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Product Details - E-Shop</title>
-  <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="css/styles.css">
   <style>
     .product-detail-container {
       max-width: 1200px;
@@ -435,193 +435,177 @@
   </footer>
 
   <script>
-    const API_URL = window.APP_CONFIG.API_URL;
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('id');
+  const API_URL = window.APP_CONFIG.API_BASE;
+  const urlParams = new URLSearchParams(window.location.search);
+  const productId = urlParams.get("id");
 
-    if (!productId) {
-      document.querySelector('.product-detail-container').innerHTML = '<p style="color:red;">No product id in URL.</p>';
-      throw new Error('No product id in URL');
-    }
+  if (!productId) {
+    document.querySelector(".product-detail-container").innerHTML =
+      '<p style="color:red;">No product id in URL.</p>';
+    throw new Error("No product id in URL");
+  }
 
-    // Fetch product details
-    async function fetchProduct() {
-      try {
-        const response = await fetch(`${API_URL}/products/${productId}`);
-        if (!response.ok) {
-          const err = await response.json().catch(()=>({message: response.statusText}));
-          console.error('Product fetch failed:', response.status, err);
-          document.querySelector('.product-detail-container').innerHTML =
-            `<p style="color:red;">Product not found: ${err.message || response.statusText}</p>`;
-          return;
-        }
-        const product = await response.json();
+  // ---------------- FETCH PRODUCT ----------------
+  async function fetchProduct() {
+    try {
+      const response = await fetch(`${API_URL}/api/products/${productId}`);
+      if (!response.ok) throw new Error("Product not found");
 
-        // Update page title
-        document.title = `${product.name} - E-Shop`;
+      const product = await response.json();
 
-        // Display product details
-        document.getElementById('productImage').src = product.image_url;
-        document.getElementById('productName').textContent = product.name;
-        document.getElementById('productPrice').textContent = product.price;
-        document.getElementById('productDescription').textContent = product.description;
-        document.getElementById('productRating').textContent = product.rating || 4.5;
-        document.getElementById('productReviews').textContent = product.reviews || 0;
-        document.getElementById('breadcrumb-product').textContent = product.name;
-        document.getElementById('productSKU').textContent = `SKU-${product.id}`;
+      document.title = `${product.name} - E-Shop`;
 
-        // Stock status
-        const stockStatus = document.getElementById('stockStatus');
-        if (product.stock > 10) {
-          stockStatus.textContent = '✓ In Stock';
-          stockStatus.className = 'stock-status';
-        } else if (product.stock > 0) {
-          stockStatus.textContent = `⚠ Only ${product.stock} left!`;
-          stockStatus.className = 'stock-status low';
-        } else {
-          stockStatus.textContent = '✗ Out of Stock';
-          stockStatus.className = 'stock-status out';
-          document.getElementById('quantity').disabled = true;
-          document.querySelector('.btn-add-cart').disabled = true;
-        }
+      document.getElementById("productImage").src = product.image_url;
+      document.getElementById("productName").textContent = product.name;
+      document.getElementById("productPrice").textContent = product.price;
+      document.getElementById("productDescription").textContent =
+        product.description || "";
+      document.getElementById("productRating").textContent = product.rating || 4.5;
+      document.getElementById("productReviews").textContent = product.reviews || 0;
+      document.getElementById("breadcrumb-product").textContent = product.name;
+      document.getElementById("productSKU").textContent = `SKU-${product.id}`;
 
-        document.getElementById('availableStock').textContent = `${product.stock} available`;
-
-        // Display stars
-        displayStars(product.rating || 4.5);
-
-        // Fetch related products
-        fetchRelatedProducts(product.category, product.id);
-      } catch (err) {
-        console.error('Error fetching product:', err);
-        document.querySelector('.product-detail-container').innerHTML =
-          `<p style="color:red;">Connection error: ${err.message}</p>`;
-      }
-    }
-
-    function displayStars(rating) {
-      const starsContainer = document.getElementById('productStars');
-      starsContainer.innerHTML = '';
-      
-      for (let i = 1; i <= 5; i++) {
-        const star = document.createElement('span');
-        star.className = 'star';
-        
-        if (i <= Math.floor(rating)) {
-          star.textContent = '★';
-        } else if (i - 0.5 <= rating) {
-          star.textContent = '½';
-        } else {
-          star.textContent = '☆';
-        }
-        
-        starsContainer.appendChild(star);
-      }
-    }
-
-    async function fetchRelatedProducts(category, currentProductId) {
-      try {
-        const response = await fetch(`${API_URL}/products/category/${category}`);
-        const products = await response.json();
-
-        const related = products.filter(p => p.id !== currentProductId).slice(0, 4);
-        const container = document.getElementById('relatedProducts');
-        container.innerHTML = '';
-
-        related.forEach(product => {
-          const card = document.createElement('div');
-          card.className = 'related-card';
-          card.onclick = () => window.location.href = `product.html?id=${product.id}`;
-          card.innerHTML = `
-            <img src="${product.image_url}" alt="${product.name}">
-            <div class="related-card-info">
-              <h4>${product.name}</h4>
-              <div class="related-card-price">₹${product.price}</div>
-              <button onclick="event.stopPropagation(); addToCartDirect(${product.id}, '${product.name}', ${product.price})" 
-                style="width: 100%; padding: 8px; background: #3498db; color: white; border: none; border-radius: 3px; cursor: pointer;">
-                Add to Cart
-              </button>
-            </div>
-          `;
-          container.appendChild(card);
-        });
-      } catch (err) {
-        console.error('Error fetching related products:', err);
-      }
-    }
-
-    function increaseQty() {
-      const qty = document.getElementById('quantity');
-      qty.value = parseInt(qty.value) + 1;
-    }
-
-    function decreaseQty() {
-      const qty = document.getElementById('quantity');
-      if (qty.value > 1) {
-        qty.value = parseInt(qty.value) - 1;
-      }
-    }
-
-    function addToCart() {
-      const quantity = parseInt(document.getElementById('quantity').value);
-      const cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-      fetch(`${API_URL}/products/${productId}`)
-        .then(res => res.json())
-        .then(product => {
-          const existingItem = cart.find(item => item._id === product.id);
-
-          if (existingItem) {
-            existingItem.quantity += quantity;
-          } else {
-            cart.push({
-              _id: product.id,
-              name: product.name,
-              price: product.price,
-              image_url: product.image_url,
-              quantity: quantity
-            });
-          }
-
-          localStorage.setItem('cart', JSON.stringify(cart));
-          alert(`✓ ${product.name} added to cart!`);
-          document.getElementById('quantity').value = 1;
-        });
-    }
-
-    function addToCartDirect(id, name, price) {
-      const cart = JSON.parse(localStorage.getItem('cart')) || [];
-      const existingItem = cart.find(item => item._id === id);
-
-      if (existingItem) {
-        existingItem.quantity += 1;
+      const stockStatus = document.getElementById("stockStatus");
+      if (product.stock > 10) {
+        stockStatus.textContent = "✓ In Stock";
+        stockStatus.className = "stock-status";
+      } else if (product.stock > 0) {
+        stockStatus.textContent = `⚠ Only ${product.stock} left!`;
+        stockStatus.className = "stock-status low";
       } else {
+        stockStatus.textContent = "✗ Out of Stock";
+        stockStatus.className = "stock-status out";
+        document.getElementById("quantity").disabled = true;
+        document.querySelector(".btn-add-cart").disabled = true;
+      }
+
+      document.getElementById(
+        "availableStock"
+      ).textContent = `${product.stock} available`;
+
+      displayStars(product.rating || 4.5);
+      fetchRelatedProducts(product.category, product.id);
+    } catch (err) {
+      console.error(err);
+      document.querySelector(".product-detail-container").innerHTML =
+        "<p style='color:red;'>Failed to load product</p>";
+    }
+  }
+
+  // ---------------- STARS ----------------
+  function displayStars(rating) {
+    const starsContainer = document.getElementById("productStars");
+    starsContainer.innerHTML = "";
+
+    for (let i = 1; i <= 5; i++) {
+      const star = document.createElement("span");
+      star.className = "star";
+
+      if (i <= Math.floor(rating)) star.textContent = "★";
+      else if (i - 0.5 <= rating) star.textContent = "½";
+      else star.textContent = "☆";
+
+      starsContainer.appendChild(star);
+    }
+  }
+
+  // ---------------- RELATED PRODUCTS ----------------
+  async function fetchRelatedProducts(category, currentProductId) {
+    try {
+      const response = await fetch(`${API_URL}/api/products`);
+      const products = await response.json();
+
+      const related = products
+        .filter(p => p.category === category && p.id !== currentProductId)
+        .slice(0, 4);
+
+      const container = document.getElementById("relatedProducts");
+      container.innerHTML = "";
+
+      related.forEach(product => {
+        const card = document.createElement("div");
+        card.className = "related-card";
+        card.onclick = () =>
+          (window.location.href = `product.html?id=${product.id}`);
+
+        card.innerHTML = `
+          <img src="${product.image_url}" alt="${product.name}">
+          <div class="related-card-info">
+            <h4>${product.name}</h4>
+            <div class="related-card-price">₹${product.price}</div>
+            <button onclick="event.stopPropagation(); addToCartDirect(${product.id}, '${product.name}', ${product.price})"
+              style="width: 100%; padding: 8px; background: #3498db; color: white; border: none; border-radius: 3px; cursor: pointer;">
+              Add to Cart
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    } catch (err) {
+      console.error("Related products error", err);
+    }
+  }
+
+  // ---------------- QUANTITY ----------------
+  function increaseQty() {
+    const qty = document.getElementById("quantity");
+    qty.value = parseInt(qty.value) + 1;
+  }
+
+  function decreaseQty() {
+    const qty = document.getElementById("quantity");
+    if (qty.value > 1) qty.value = parseInt(qty.value) - 1;
+  }
+
+  // ---------------- ADD TO CART ----------------
+  function addToCart() {
+  const qty = parseInt(document.getElementById("quantity").value);
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+fetch(`${window.APP_CONFIG.API_BASE}/api/products/${productId}`)
+    .then(res => res.json())
+    .then(product => {
+      const existing = cart.find(i => i.id === product.id);
+
+      if (existing) existing.quantity += qty;
+      else {
         cart.push({
-          _id: id,
-          name: name,
-          price: price,
-          image_url: document.getElementById('productImage').src,
-          quantity: 1
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image_url: product.image_url,
+          quantity: qty
         });
       }
 
-      localStorage.setItem('cart', JSON.stringify(cart));
-      alert(`✓ ${name} added to cart!`);
-    }
-
-    function addToWishlist() {
-      alert('❤️ Added to Wishlist!');
-    }
-
-    // Logout
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = 'index.html';
+      localStorage.setItem("cart", JSON.stringify(cart));
+      alert("✓ Added to cart");
     });
+}
 
-    // Load product on page load
-    window.addEventListener('load', fetchProduct);
-  </script>
+
+  function addToCartDirect(id, name, price) {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const existingItem = cart.find(item => item.id === id);
+
+    if (existingItem) existingItem.quantity += 1;
+    else {
+      cart.push({
+        id: id,
+        name: name,
+        price: price,
+        image_url: document.getElementById("productImage").src,
+        quantity: 1
+      });
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert(`✓ ${name} added to cart!`);
+  }
+
+  // ---------------- LOAD PRODUCT ----------------
+  window.addEventListener("load", fetchProduct);
+</script>
+
 </body>
 </html>

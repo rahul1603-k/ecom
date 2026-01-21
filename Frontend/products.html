@@ -449,7 +449,7 @@ let allProducts=[];
 let currentCategory="all";
 let searchTerm="";
 
-fetch("http://localhost:3000/api/products")
+fetch(window.APP_CONFIG.API_BASE + "/api/products")
 .then(res=>res.json())
 .then(data=>{
   allProducts=(data || []).map((p,i)=>{
@@ -496,7 +496,7 @@ function showProducts(list){
     div.addEventListener("click", () => {
       div.style.animation = "fadeOut .4s ease-in forwards";
       setTimeout(() => {
-        navigateTo("product.html?id="+(p._id || p.id));
+        navigateTo("product.html?id=" + p.id);
       }, 100);
     });
     

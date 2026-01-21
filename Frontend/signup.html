@@ -232,16 +232,10 @@
       if (hasError) return;
 
       try {
-        const response = await fetch(`${API_URL}/users/signup`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: name,
-            email: email,
-            password: password
-          })
+        const response = await fetch(`${window.APP_CONFIG.API_BASE}/api/users/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password })
         });
 
         const data = await response.json();

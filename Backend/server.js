@@ -10,7 +10,10 @@ const orderRoutes = require('./routes/orderRoutes');
 const app = express();
 
 // Middleware
-app.use(cors());
+const corsOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',').map(o => o.trim()) : undefined;
+app.use(cors({
+  origin: corsOrigins || true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

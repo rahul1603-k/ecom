@@ -256,7 +256,7 @@ input:focus{
 </div>
 
 <script>
-const API_URL = window.APP_CONFIG.API_URL;
+const API_URL = window.APP_CONFIG.API_BASE;
 
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -265,7 +265,8 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
   const password = document.getElementById('password').value;
 
   try {
-    const response = await fetch(`${API_URL}/users/login`, {
+    const response = await fetch(`${window.APP_CONFIG.API_BASE}/api/users/login`, {
+
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

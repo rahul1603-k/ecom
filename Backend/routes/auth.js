@@ -6,6 +6,8 @@ const db = require('../config/db');
 
 // SIGNUP route
 router.post('/signup', signup);
+// Compatibility alias for existing frontend
+router.post('/register', signup);
 
 // LOGIN route
 router.post('/login', login);

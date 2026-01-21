@@ -244,9 +244,9 @@ profileCard.innerHTML = `
   <button class="logout-btn" onclick="logout()">Logout</button>
 `;
 
-const API_URL = window.APP_CONFIG.API_URL;
+const API_URL = window.APP_CONFIG.API_BASE;
 
-fetch(API_URL + "/api/orders/my", {
+fetch(`${API_URL}/api/orders/my`, {
   headers: { Authorization: "Bearer " + token }
 })
 .then(res => res.json())
@@ -265,9 +265,9 @@ fetch(API_URL + "/api/orders/my", {
     div.style.animationDelay = (index * 0.1) + "s";
     
     div.innerHTML = `
-      <h4>📦 Order #${(o._id || o.id).substring(0, 8)}</h4>
+      <h4>Order #${o.id}</h4>
       <p><b>Total:</b> ₹${o.total}</p>
-      <p><b>Date:</b> ${new Date(o.createdAt).toLocaleString()}</p>
+      <p><b>Date:</b> ${new Date(o.created_at || o.createdAt).toLocaleString()}</p>
       <ul>
         ${o.items.map(i => `<li>${i.name} × ${i.quantity}</li>`).join("")}
       </ul>

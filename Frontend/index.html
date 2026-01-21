@@ -394,130 +394,33 @@ footer{
 <footer>© 2026 E-Shop | Powered by Rahul</footer>
 
 <script>
-let isNavigating = false;
-
-function navigateTo(url) {
-  if (isNavigating) return;
-  isNavigating = true;
-  document.body.classList.add('page-exit');
-  setTimeout(() => {
-    window.location.href = url;
-  }, 400);
-}
-
-function goToCategory(category) {
-  sessionStorage.setItem("selectedCategory", category);
-  navigateTo('products.html');
-}
-
-const token = localStorage.getItem("token");
-const user = JSON.parse(localStorage.getItem("user"));
-
-if (token && user) {
-  document.getElementById("loginLink").style.display = "none";
-  document.getElementById("dashboardLink").style.display = "inline";
-  document.getElementById("logoutLink").style.display = "inline";
-}
-
-function logout() {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  localStorage.removeItem("cart");
-  navigateTo('login.html');
-}
-
+const API = window.APP_CONFIG.API_BASE;
 let allProducts = [];
 
-async function loadProducts() {
-  try {
-    const res = await fetch("http://localhost:3000/api/products");
-    allProducts = await res.json();
-    const container = document.getElementById("product-list");
-    container.innerHTML = "";
-
-    allProducts.slice(0, 6).forEach((p, index) => {
-      const div = document.createElement("div");
-      div.className = "product-card";
-      div.innerHTML = `
-        <img src="${p.image_url || 'https://via.placeholder.com/220x180'}" alt="${p.name}">
-        <h3>${p.name}</h3>
-        <p>₹${p.price}</p>
-        <button onclick="addToCart('${p._id}', event)">Add to Cart</button>
-      `;
-      container.appendChild(div);
-    });
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-function addToCart(id, event) {
-  event.stopPropagation();
-  if (!token) return alert("Please login first");
-
-  const product = allProducts.find(p => p._id === id);
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
-  const exist = cart.find(p => p._id === id);
-
-  if (exist) exist.quantity++;
-  else cart.push({ ...product, quantity: 1 });
-
-  localStorage.setItem("cart", JSON.stringify(cart));
-  alert("Added to cart ✓");
-}
-
-const searchInput = document.getElementById("searchInput");
-const searchResults = document.getElementById("searchResults");
-
-searchInput.addEventListener("input", (e) => {
-  const query = e.target.value.toLowerCase().trim();
-
-  if (query.length === 0) {
-    searchResults.classList.remove("show");
-    return;
-  }
-
-  const filtered = allProducts.filter(p =>
-    p.name.toLowerCase().includes(query) ||
-    p.description?.toLowerCase().includes(query)
-  );
-
-  searchResults.innerHTML = "";
-
-  if (filtered.length === 0) {
-    searchResults.innerHTML = '<div style="padding:20px;text-align:center;color:#888;">No products found</div>';
-    searchResults.classList.add("show");
-    return;
-  }
-
-  filtered.slice(0, 8).forEach(p => {
-    const div = document.createElement("div");
-    div.className = "search-item";
-    div.innerHTML = `
-      <img src="${p.image_url || 'https://via.placeholder.com/40'}" alt="${p.name}">
-      <div class="search-item-details">
-        <h4>${p.name}</h4>
-        <p>₹${p.price}</p>
-      </div>
-    `;
-    div.addEventListener("click", () => {
-      addToCart(p._id, { stopPropagation: () => {} });
-      searchInput.value = "";
-      searchResults.classList.remove("show");
-    });
-    searchResults.appendChild(div);
+fetch(`${window.APP_CONFIG.API_BASE}/api/products`)
+  .then(res => res.json())
+  .then(data => {
+    allProducts = data;
+    renderProducts(data.slice(0, 6));
   });
 
-  searchResults.classList.add("show");
-});
+function renderProducts(list) {
+  const box = document.getElementById("product-list");
+  box.innerHTML = "";
 
-document.addEventListener("click", (e) => {
-  if (!e.target.closest(".navbar")) {
-    searchResults.classList.remove("show");
-  }
-});
+  list.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "product-card";
+    div.innerHTML = `
+      <img src="${p.image_url}">
+      <h3>${p.name}</h3>
+      <p>₹${p.price}</p>
+      <button onclick="location.href='product.html?id=${p.id}'">View</button>
+    `;
+    box.appendChild(div);
+  });
+}
 
-loadProducts();
 </script>
 
 </body>

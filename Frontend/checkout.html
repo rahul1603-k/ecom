@@ -308,7 +308,9 @@ document.getElementById("checkoutForm").addEventListener("submit", async (e) => 
   }
   
   try {
-    const res = await fetch("http://localhost:3000/api/orders", {
+    const API = window.APP_CONFIG.API_BASE;
+    
+    const res = await fetch(`${window.APP_CONFIG.API_BASE}/api/orders`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -317,10 +319,10 @@ document.getElementById("checkoutForm").addEventListener("submit", async (e) => 
       body: JSON.stringify({
         items: cart,
         total: total,
-        shippingAddress: {fullName, email, phone, address, city, state, zip}
+        shippingAddress: { fullName, email, phone, address, city, state, zip }
       })
     });
-    
+
     const data = await res.json();
     
     if(!res.ok) {
